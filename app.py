@@ -34,7 +34,9 @@ if os.environ.get('DATABASE_URL'):
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://')
 else:
     # Configuration pour le développement (SQLite)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database', 'stock.db')
+    database_path = os.path.join(basedir, 'database', 'stock.db')
+    os.makedirs(os.path.dirname(database_path), exist_ok=True)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
