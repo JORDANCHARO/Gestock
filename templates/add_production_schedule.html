@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Planifier une Production - GestStock{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Planifier une Production</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="recipe_id" class="form-label">Recette</label>
+                            <select class="form-select" id="recipe_id" name="recipe_id" required>
+                                <option value="">Sélectionner une recette</option>
+                                {% for recipe in recipes %}
+                                <option value="{{ recipe.id }}" 
+                                        data-preparation-time="{{ recipe.preparation_time }}"
+                                        data-cooking-time="{{ recipe.cooking_time }}">
+                                    {{ recipe.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="planned_quantity" class="form-label">Quantité à Produire</label>
+                            <input type="number" class="form-control" id="planned_quantity" name="planned_quantity" step="0.01" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="planned_start_time" class="form-label">Heure de Début</label>
+                                    <input type="datetime-local" class="form-control" id="planned_start_time" name="planned_start_time" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="planned_end_time" class="form-label">Heure de Fin</label>
+                                    <input type="datetime-local" class="form-control" id="planned_end_time" name="planned_end_time" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priorité</label>
+                            <select class="form-select" id="priority" name="priority" required>
+                                <option value="1">Normal</option>
+                                <option value="2">Urgent</option>
+                                <option value="3">Très urgent</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('production_schedule') }}" class="btn btn-secondary">Annuler</a>
+                            <button type="submit" class="btn btn-primary">Planifier</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const recipeSelect = document.getElementById('recipe_id');
+    const startTimeInput = document.getElementById('planned_start_time');
+    const endTimeInput = document.getElementById('planned_end_time');
+
+    // Calculer automatiquement l'heure de fin en fonction du temps de préparation et de cuisson
+    recipeSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const preparationTime = parseInt(selectedOption.dataset.preparationTime) || 0;
+        const cookingTime = parseInt(selectedOption.dataset.cookingTime) || 0;
+        
+        if (startTimeInput.value) {
+            const startTime = new Date(startTimeInput.value);
+            const endTime = new Date(startTime.getTime() + (preparationTime + cookingTime) * 60000);
+            endTimeInput.value = endTime.toISOString().slice(0, 16);
+        }
+    });
+
+    // Mettre à jour l'heure de fin quand l'heure de début change
+    startTimeInput.addEventListener('change', function() {
+        const selectedOption = recipeSelect.options[recipeSelect.selectedIndex];
+        const preparationTime = parseInt(selectedOption.dataset.preparationTime) || 0;
+        const cookingTime = parseInt(selectedOption.dataset.cookingTime) || 0;
+        
+        if (this.value) {
+            const startTime = new Date(this.value);
+            const endTime = new Date(startTime.getTime() + (preparationTime + cookingTime) * 60000);
+            endTimeInput.value = endTime.toISOString().slice(0, 16);
+        }
+    });
+});
+</script>
+{% endblock %} 

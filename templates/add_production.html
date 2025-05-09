@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Démarrer une Nouvelle Production</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="recipe_id" class="form-label">Recette</label>
+                            <select class="form-select" id="recipe_id" name="recipe_id" required>
+                                <option value="">Sélectionner une recette</option>
+                                {% for recipe in recipes %}
+                                <option value="{{ recipe.id }}">{{ recipe.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantité à Produire</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Démarrer la Production</button>
+                            <a href="{{ url_for('production') }}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

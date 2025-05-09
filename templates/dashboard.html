@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord - GestStock{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Tableau de bord</h2>
+
+    <!-- Alertes de stock bas -->
+    {% if low_stock_products %}
+    <div class="alert alert-danger mb-4">
+        <h4 class="alert-heading">Alertes de stock bas</h4>
+        <p>Les produits suivants sont en dessous du seuil minimum :</p>
+        <ul>
+            {% for product in low_stock_products %}
+            <li>{{ product.name }} - Stock actuel : {{ product.quantity }} {{ product.unit }} (Seuil : {{ product.min_quantity }})</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total des produits</h5>
+                    <h2 class="card-text">{{ products|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Produits en alerte</h5>
+                    <h2 class="card-text">{{ low_stock_products|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Stock OK</h5>
+                    <h2 class="card-text">{{ products|length - low_stock_products|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des produits -->
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">État du stock</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Catégorie</th>
+                            <th>Quantité</th>
+                            <th>Unité</th>
+                            <th>Seuil minimum</th>
+                            <th>État</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr {% if product.quantity <= product.min_quantity %}class="table-danger"{% endif %}>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.quantity }}</td>
+                            <td>{{ product.unit }}</td>
+                            <td>{{ product.min_quantity }}</td>
+                            <td>
+                                {% if product.quantity <= product.min_quantity %}
+                                <span class="badge bg-danger">Stock bas</span>
+                                {% else %}
+                                <span class="badge bg-success">OK</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

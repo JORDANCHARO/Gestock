@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Gestion des Lots</h2>
+        <a href="{{ url_for('add_batch') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nouveau Lot
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Numéro de Lot</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Date de Production</th>
+                            <th>Date d'Expiration</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for batch in batches %}
+                        <tr class="{% if batch.expiry_date <= now %}table-danger{% elif batch.expiry_date <= now + timedelta(days=3) %}table-warning{% endif %}">
+                            <td>{{ batch.batch_number }}</td>
+                            <td>{{ batch.product.name }}</td>
+                            <td>{{ batch.quantity }}</td>
+                            <td>{{ batch.production_date.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ batch.expiry_date.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                {% if batch.expiry_date <= now %}
+                                    <span class="badge bg-danger">Expiré</span>
+                                {% elif batch.expiry_date <= now + timedelta(days=3) %}
+                                    <span class="badge bg-warning">Expire bientôt</span>
+                                {% else %}
+                                    <span class="badge bg-success">Valide</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

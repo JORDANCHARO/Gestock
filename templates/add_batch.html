@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Ajouter un Nouveau Lot</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="product_id" class="form-label">Produit</label>
+                            <select class="form-select" id="product_id" name="product_id" required>
+                                <option value="">Sélectionner un produit</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantité</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="production_date" class="form-label">Date de Production</label>
+                            <input type="date" class="form-control" id="production_date" name="production_date" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="expiry_date" class="form-label">Date d'Expiration</label>
+                            <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Ajouter le Lot</button>
+                            <a href="{{ url_for('batches') }}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Définir la date d'aujourd'hui comme date de production par défaut
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('production_date').value = today;
+    
+    // Définir la date d'expiration par défaut (2 jours plus tard)
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 2);
+    document.getElementById('expiry_date').value = expiryDate.toISOString().split('T')[0];
+});
+</script>
+{% endblock %} 

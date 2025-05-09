@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Nouveau Mouvement - GestStock{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Nouveau Mouvement de Stock</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="product_id" class="form-label">Produit</label>
+                            <select class="form-select" id="product_id" name="product_id" required>
+                                <option value="">Sélectionnez un produit</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}">
+                                    {{ product.name }} (Stock actuel: {{ product.quantity }} {{ product.unit }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type de mouvement</label>
+                            <select class="form-select" id="type" name="type" required>
+                                <option value="in">Entrée de stock</option>
+                                <option value="out">Sortie de stock</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantité</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" min="0.01" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                            <small class="form-text text-muted">
+                                Exemple: "Réception de marchandise", "Production de pain", "Vente au détail"
+                            </small>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('movements') }}" class="btn btn-secondary">Annuler</a>
+                            <button type="submit" class="btn btn-primary">Enregistrer le mouvement</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.getElementById('type').addEventListener('change', function() {
+    const productSelect = document.getElementById('product_id');
+    const selectedProduct = productSelect.options[productSelect.selectedIndex];
+    const currentStock = parseFloat(selectedProduct.text.match(/Stock actuel: ([\d.]+)/)[1]);
+    const quantityInput = document.getElementById('quantity');
+    
+    if (this.value === 'out') {
+        quantityInput.max = currentStock;
+        if (parseFloat(quantityInput.value) > currentStock) {
+            quantityInput.value = currentStock;
+        }
+    } else {
+        quantityInput.removeAttribute('max');
+    }
+});
+
+document.getElementById('product_id').addEventListener('change', function() {
+    const typeSelect = document.getElementById('type');
+    if (typeSelect.value === 'out') {
+        const selectedProduct = this.options[this.selectedIndex];
+        const currentStock = parseFloat(selectedProduct.text.match(/Stock actuel: ([\d.]+)/)[1]);
+        const quantityInput = document.getElementById('quantity');
+        quantityInput.max = currentStock;
+        if (parseFloat(quantityInput.value) > currentStock) {
+            quantityInput.value = currentStock;
+        }
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

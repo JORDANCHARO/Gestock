@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Modifier l'utilisateur</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Rôle</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="manager" {% if user.role == 'manager' %}selected{% endif %}>Gestionnaire</option>
+                                <option value="baker" {% if user.role == 'baker' %}selected{% endif %}>Boulanger</option>
+                                <option value="cashier" {% if user.role == 'cashier' %}selected{% endif %}>Caissier</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                            <a href="{{ url_for('users') }}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

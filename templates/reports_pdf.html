@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport de Gestion - {{ start_date.strftime('%d/%m/%Y') }} au {{ end_date.strftime('%d/%m/%Y') }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2cm;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2cm;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 0.5cm;
+        }
+        .header p {
+            color: #666;
+        }
+        .section {
+            margin-bottom: 1cm;
+        }
+        .section h2 {
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.2cm;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1cm;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .total {
+            font-weight: bold;
+            text-align: right;
+        }
+        .footer {
+            margin-top: 2cm;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Rapport de Gestion</h1>
+        <p>Période : {{ start_date.strftime('%d/%m/%Y') }} au {{ end_date.strftime('%d/%m/%Y') }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Résumé Financier</h2>
+        <table>
+            <tr>
+                <th>Description</th>
+                <th>Montant</th>
+            </tr>
+            <tr>
+                <td>Ventes Totales</td>
+                <td>{{ total_sales|format_currency }} FCFA</td>
+            </tr>
+            <tr>
+                <td>Dépenses Totales</td>
+                <td>{{ total_expenses|format_currency }} FCFA</td>
+            </tr>
+            <tr>
+                <td>Marge Bénéficiaire</td>
+                <td>{{ (total_sales - total_expenses)|format_currency }} FCFA</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Ventes par Catégorie</h2>
+        <table>
+            <tr>
+                <th>Catégorie</th>
+                <th>Total</th>
+            </tr>
+            {% for category in sales_by_category %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td>{{ category.total|format_currency }} FCFA</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Top Produits</h2>
+        <table>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Montant</th>
+            </tr>
+            {% for product in top_products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.total_quantity }}</td>
+                <td>{{ product.total_amount|format_currency }} FCFA</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Produits en Alerte de Stock</h2>
+        <table>
+            <tr>
+                <th>Produit</th>
+                <th>Stock Actuel</th>
+                <th>Seuil Minimum</th>
+            </tr>
+            {% for product in low_stock_products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity }} {{ product.unit }}</td>
+                <td>{{ product.min_quantity }} {{ product.unit }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Produits en Rupture de Stock</h2>
+        <table>
+            <tr>
+                <th>Produit</th>
+                <th>Unité</th>
+            </tr>
+            {% for product in out_of_stock_products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.unit }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Rapport généré le {{ now.strftime('%d/%m/%Y à %H:%M') }}</p>
+    </div>
+</body>
+</html> 

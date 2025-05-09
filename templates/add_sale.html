@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Nouvelle Vente - GestStock{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Nouvelle Vente</h1>
+        <a href="{{ url_for('sales') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <form method="POST" id="saleForm">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="customer_id">Client (optionnel)</label>
+                            <select class="form-control" id="customer_id" name="customer_id">
+                                <option value="">Sélectionner un client</option>
+                                {% for customer in customers %}
+                                <option value="{{ customer.id }}">{{ customer.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="payment_method">Méthode de paiement</label>
+                            <select class="form-control" id="payment_method" name="payment_method" required>
+                                <option value="cash">Espèces</option>
+                                <option value="mobile_money">Mobile Money</option>
+                                <option value="card">Carte</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="products">
+                    <h4 class="mb-3">Produits</h4>
+                    <div class="product-item mb-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Produit</label>
+                                    <select class="form-control" name="product_id[]" required>
+                                        <option value="">Sélectionner un produit</option>
+                                        {% for product in products %}
+                                        <option value="{{ product.id }}" data-price="{{ product.price }}">
+                                            {{ product.name }} ({{ product.price }} FCFA)
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quantité</label>
+                                    <input type="number" class="form-control quantity" name="quantity[]" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Actions</label>
+                                    <button type="button" class="btn btn-danger btn-block remove-product">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-info mb-3" id="addProduct">
+                    <i class="fas fa-plus"></i> Ajouter un produit
+                </button>
+
+                <div class="row">
+                    <div class="col-md-6 offset-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5>Total: <span id="total">0</span> FCFA</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer la vente
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productsDiv = document.getElementById('products');
+    const addProductBtn = document.getElementById('addProduct');
+    const totalSpan = document.getElementById('total');
+
+    // Fonction pour calculer le total
+    function calculateTotal() {
+        let total = 0;
+        const rows = document.querySelectorAll('.product-item');
+        rows.forEach(row => {
+            const select = row.querySelector('select[name="product_id[]"]');
+            const quantity = row.querySelector('input[name="quantity[]"]');
+            if (select.value && quantity.value) {
+                const price = parseFloat(select.options[select.selectedIndex].dataset.price);
+                total += price * parseFloat(quantity.value);
+            }
+        });
+        totalSpan.textContent = total.toFixed(2);
+    }
+
+    // Ajouter un nouveau produit
+    addProductBtn.addEventListener('click', function() {
+        const productItem = document.querySelector('.product-item').cloneNode(true);
+        productItem.querySelector('select').value = '';
+        productItem.querySelector('input').value = '';
+        productsDiv.appendChild(productItem);
+
+        // Réinitialiser les écouteurs d'événements
+        setupEventListeners(productItem);
+    });
+
+    // Configurer les écouteurs d'événements pour une ligne de produit
+    function setupEventListeners(productItem) {
+        const removeBtn = productItem.querySelector('.remove-product');
+        const quantityInput = productItem.querySelector('.quantity');
+        const productSelect = productItem.querySelector('select[name="product_id[]"]');
+
+        removeBtn.addEventListener('click', function() {
+            if (document.querySelectorAll('.product-item').length > 1) {
+                productItem.remove();
+                calculateTotal();
+            }
+        });
+
+        quantityInput.addEventListener('input', calculateTotal);
+        productSelect.addEventListener('change', calculateTotal);
+    }
+
+    // Configurer les écouteurs d'événements pour la première ligne
+    setupEventListeners(document.querySelector('.product-item'));
+});
+</script>
+{% endblock %}
+{% endblock %} 

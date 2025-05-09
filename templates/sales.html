@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Ventes - GestStock{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Gestion des Ventes</h2>
+        <a href="{{ url_for('add_sale') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nouvelle Vente
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Produits</th>
+                            <th>Total</th>
+                            <th>Mode de paiement</th>
+                            <th>Vendeur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in sales %}
+                        <tr>
+                            <td>{{ sale.date.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td>{{ sale.customer.name if sale.customer else 'Client occasionnel' }}</td>
+                            <td>
+                                <ul class="list-unstyled mb-0">
+                                    {% for item in sale.items %}
+                                    <li>
+                                        {{ item.product.name }} - 
+                                        {{ item.quantity }} {{ item.product.unit }} x 
+                                        {{ "%.2f"|format(item.unit_price) }} FCFA
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>{{ "%.2f"|format(sale.total_amount) }} FCFA</td>
+                            <td>
+                                {% if sale.payment_method == 'cash' %}
+                                    <span class="badge bg-success">Espèces</span>
+                                {% elif sale.payment_method == 'mobile_money' %}
+                                    <span class="badge bg-primary">Mobile Money</span>
+                                {% else %}
+                                    <span class="badge bg-info">Carte</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ sale.user.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

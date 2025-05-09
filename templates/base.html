@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion de Stock - Boulangerie{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            color: #ddd;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .low-stock {
+            color: #dc3545;
+        }
+        .nav-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <h3 class="text-white mb-4">GestStock</h3>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('dashboard') }}" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Tableau de bord
+                        </a>
+                    </li>
+
+                    <!-- Gestion des stocks -->
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('products') }}" class="nav-link">
+                            <i class="bi bi-box"></i> Produits
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('movements') }}" class="nav-link">
+                            <i class="bi bi-arrow-left-right"></i> Mouvements
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('suppliers') }}" class="nav-link">
+                            <i class="bi bi-truck"></i> Fournisseurs
+                        </a>
+                    </li>
+
+                    <div class="nav-divider"></div>
+
+                    <!-- Production -->
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('recipes') }}" class="nav-link">
+                            <i class="bi bi-book"></i> Recettes
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('production') }}" class="nav-link">
+                            <i class="bi bi-gear"></i> Production
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('production_schedule') }}" class="nav-link">
+                            <i class="bi bi-calendar3"></i> Planning
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('batches') }}" class="nav-link">
+                            <i class="bi bi-boxes"></i> Lots
+                        </a>
+                    </li>
+
+                    <div class="nav-divider"></div>
+
+                    <!-- Ventes et finances -->
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('sales') }}" class="nav-link">
+                            <i class="bi bi-cart"></i> Ventes
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('expenses') }}" class="nav-link">
+                            <i class="bi bi-cash"></i> Dépenses
+                        </a>
+                    </li>
+
+                    {% if current_user.has_role('manager') %}
+                    <div class="nav-divider"></div>
+                    
+                    <!-- Administration -->
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('users') }}" class="nav-link">
+                            <i class="bi bi-people"></i> Utilisateurs
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ url_for('categories') }}" class="nav-link">
+                            <i class="bi bi-tags"></i> Catégories
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <div class="nav-divider"></div>
+                    
+                    <li class="nav-item">
+                        <a href="{{ url_for('logout') }}" class="nav-link">
+                            <i class="bi bi-box-arrow-right"></i> Déconnexion
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('customers') }}">
+                            <i class="fas fa-users"></i> Clients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('reports') }}">
+                            <i class="fas fa-chart-bar"></i> Rapports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Main content -->
+            <div class="col-md-10 main-content">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-info">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+        {% block auth_content %}{% endblock %}
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 
