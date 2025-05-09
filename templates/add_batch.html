@@ -21,18 +21,33 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="supplier_id" class="form-label">Fournisseur</label>
+                            <select class="form-select" id="supplier_id" name="supplier_id" required>
+                                <option value="">Sélectionner un fournisseur</option>
+                                {% for supplier in suppliers %}
+                                <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="quantity" class="form-label">Quantité</label>
                             <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="production_date" class="form-label">Date de Production</label>
-                            <input type="date" class="form-control" id="production_date" name="production_date" required>
+                            <label for="purchase_price" class="form-label">Prix d'Achat (FCFA)</label>
+                            <input type="number" class="form-control" id="purchase_price" name="purchase_price" step="0.01" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="expiry_date" class="form-label">Date d'Expiration</label>
                             <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
                         </div>
 
                         <div class="d-grid gap-2">
@@ -48,10 +63,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Définir la date d'aujourd'hui comme date de production par défaut
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('production_date').value = today;
-    
     // Définir la date d'expiration par défaut (2 jours plus tard)
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 2);

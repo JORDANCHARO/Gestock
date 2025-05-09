@@ -536,35 +536,43 @@ def batches():
 
 @app.route('/batches/add', methods=['GET', 'POST'])
 @login_required
+@manager_required
 def add_batch():
     if request.method == 'POST':
         product_id = request.form.get('product_id')
-        quantity = float(request.form.get('quantity'))
-        production_date = datetime.strptime(request.form.get('production_date'), '%Y-%m-%d')
+        quantity = float(request.form.get('quantity', 0))
         expiry_date = datetime.strptime(request.form.get('expiry_date'), '%Y-%m-%d')
-        
-        # Génération du numéro de lot
-        batch_number = f"LOT-{datetime.now().strftime('%Y%m%d')}-{product_id}"
+        supplier_id = request.form.get('supplier_id')
+        purchase_price = float(request.form.get('purchase_price', 0))
+        notes = request.form.get('notes')
         
         batch = ProductBatch(
             product_id=product_id,
-            batch_number=batch_number,
             quantity=quantity,
-            production_date=production_date,
-            expiry_date=expiry_date
+            expiry_date=expiry_date,
+            supplier_id=supplier_id,
+            purchase_price=purchase_price,
+            notes=notes
         )
-        db.session.add(batch)
         
-        # Mise à jour du stock
+        # Mettre à jour le stock du produit
         product = Product.query.get(product_id)
         product.quantity += quantity
         
+        db.session.add(batch)
         db.session.commit()
         flash('Lot ajouté avec succès!')
         return redirect(url_for('batches'))
     
-    products = Product.query.filter_by(type='raw').all()
-    return render_template('add_batch.html', products=products)
+    # Récupérer uniquement les produits de type matière première
+    raw_materials_category = Category.query.filter_by(name='Matières premières').first()
+    if raw_materials_category:
+        products = Product.query.filter_by(category_id=raw_materials_category.id).all()
+    else:
+        products = []
+    
+    suppliers = Supplier.query.all()
+    return render_template('add_batch.html', products=products, suppliers=suppliers)
 
 # Routes pour la gestion de la production
 @app.route('/production')
