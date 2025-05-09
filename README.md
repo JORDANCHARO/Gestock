@@ -1,88 +1,97 @@
-# GestStock - Gestion de Stock pour Boulangerie
+# Gestock - Application de Gestion de Boulangerie
 
-Une application web simple et efficace pour gérer les stocks d'une boulangerie, développée avec Flask et SQLite.
+Gestock est une application web de gestion complète pour boulangeries, développée avec Flask et SQLAlchemy.
 
 ## Fonctionnalités
 
-- Authentification des utilisateurs (admin et employés)
-- Gestion des matières premières et produits finis
-- Suivi des entrées et sorties de stock
-- Alertes de stock bas
-- Tableau de bord avec statistiques
-- Interface utilisateur intuitive
+- Gestion des stocks et des produits
+- Gestion des recettes et de la production
+- Gestion des ventes et des clients
+- Gestion des fournisseurs
+- Gestion des utilisateurs et des rôles
+- Rapports et statistiques
+- Interface adaptée aux écrans tactiles
 
 ## Prérequis
 
 - Python 3.8 ou supérieur
 - pip (gestionnaire de paquets Python)
+- Git
 
 ## Installation
 
-1. Clonez ce dépôt ou téléchargez les fichiers
+1. Cloner le dépôt :
+```bash
+git clone https://github.com/votre-username/gestock.git
+cd gestock
+```
 
-2. Créez un environnement virtuel (recommandé) :
+2. Créer un environnement virtuel :
 ```bash
 python -m venv venv
+source venv/bin/activate  # Sur Windows : venv\Scripts\activate
 ```
 
-3. Activez l'environnement virtuel :
-- Windows :
-```bash
-venv\Scripts\activate
-```
-- Mac/Linux :
-```bash
-source venv/bin/activate
-```
-
-4. Installez les dépendances :
+3. Installer les dépendances :
 ```bash
 pip install -r requirements.txt
 ```
 
-5. Initialisez la base de données :
+4. Initialiser la base de données :
 ```bash
 python init_db.py
 ```
 
-## Lancement de l'application
+## Configuration
 
-1. Démarrez le serveur :
+1. Créer un fichier `.env` à la racine du projet :
+```
+FLASK_APP=app.py
+FLASK_ENV=development
+SECRET_KEY=votre_clé_secrète
+```
+
+2. Pour la production, configurer les variables d'environnement :
+- `DATABASE_URL` : URL de la base de données PostgreSQL
+- `FLASK_ENV=production`
+- `SECRET_KEY` : Clé secrète pour la sécurité
+
+## Démarrage
+
+1. Mode développement :
 ```bash
 python app.py
 ```
 
-2. Accédez à l'application dans votre navigateur :
-```
-http://localhost:5000
-```
-
-## Identifiants par défaut
-
-- Email : admin@boulangerie.com
-- Mot de passe : admin123
-
-## Structure du projet
-
-```
-gestock/
-├── app.py              # Point d'entrée de l'application
-├── models.py           # Modèles de données
-├── init_db.py          # Script d'initialisation de la base de données
-├── requirements.txt    # Dépendances Python
-├── database/          # Dossier contenant la base de données SQLite
-└── templates/         # Templates HTML
-    ├── base.html
-    ├── login.html
-    └── dashboard.html
+2. Mode production :
+```bash
+gunicorn app:app
 ```
 
-## Sécurité
+## Accès
 
-- Changez le mot de passe administrateur par défaut après la première connexion
-- La clé secrète de l'application doit être modifiée en production
-- Utilisez HTTPS en production
+- URL : http://localhost:5000
+- Identifiants par défaut :
+  - Utilisateur : admin
+  - Mot de passe : admin123
+
+## Déploiement
+
+L'application peut être déployée sur :
+- Render.com
+- Heroku
+- PythonAnywhere
+- Votre propre serveur
+
+## Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+1. Fork le projet
+2. Créer une branche pour votre fonctionnalité
+3. Commiter vos changements
+4. Pousser vers la branche
+5. Ouvrir une Pull Request
 
 ## Licence
 
-Ce projet est sous licence MIT. 
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails. 
