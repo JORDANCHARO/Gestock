@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import os
+from dotenv import load_dotenv
 from models import (
     db, User, Product, StockMovement, Supplier, Recipe, 
     RecipeIngredient, Sale, ProductBatch, ProductionRecord, Category, Customer, SaleItem, Expense, ProductionSchedule
@@ -13,8 +14,11 @@ from functools import wraps
 from weasyprint import HTML
 import tempfile
 
+# Chargement des variables d'environnement
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'votre_clé_secrète_ici'
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'clé_par_défaut_pour_le_développement')
 
 # Ajout du filtre format_currency
 @app.template_filter('format_currency')
