@@ -42,18 +42,21 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.id'), nullable=False)
+    type = db.Column(db.String(20), default='raw')  # 'raw' pour matières premières, 'finished' pour produits finis
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.id'))
     quantity = db.Column(db.Float, default=0)
-    unit = db.Column(db.String(20), nullable=False)
+    unit = db.Column(db.String(20))
     min_quantity = db.Column(db.Float, default=0)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Float, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    movements = db.relationship('StockMovement', backref='product', lazy=True)
+    # Relations
+    stock_movements = db.relationship('StockMovement', backref='product', lazy=True)
     recipe_ingredients = db.relationship('RecipeIngredient', backref='product', lazy=True)
     sale_items = db.relationship('SaleItem', backref='product', lazy=True)
+    batches = db.relationship('ProductBatch', backref='product', lazy=True)
 
     def __repr__(self):
         return f'<Product {self.name}>'
@@ -66,8 +69,6 @@ class ProductBatch(db.Model):
     production_date = db.Column(db.DateTime, nullable=False)
     expiry_date = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    product = db.relationship('Product', backref='batches')
 
     def __repr__(self):
         return f'<ProductBatch {self.batch_number}>'

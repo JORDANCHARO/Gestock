@@ -430,50 +430,46 @@ def recipes():
 @baker_required
 def add_recipe():
     if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        preparation_time = request.form.get('preparation_time')
+        cooking_time = request.form.get('cooking_time')
+        yield_quantity = request.form.get('yield_quantity')
+        yield_unit = request.form.get('yield_unit')
+        
         recipe = Recipe(
-            name=request.form.get('name'),
-            description=request.form.get('description'),
-            preparation_time=int(request.form.get('preparation_time')),
-            cooking_time=int(request.form.get('cooking_time')),
-            temperature=int(request.form.get('temperature')),
-            yield_quantity=float(request.form.get('yield_quantity')),
-            yield_unit=request.form.get('yield_unit'),
-            selling_price=float(request.form.get('selling_price'))
+            name=name,
+            description=description,
+            preparation_time=preparation_time,
+            cooking_time=cooking_time,
+            yield_quantity=yield_quantity,
+            yield_unit=yield_unit
         )
         db.session.add(recipe)
         db.session.commit()
         
-        # Ajout des ingrédients
+        # Gestion des ingrédients
         ingredients = request.form.getlist('ingredients[]')
         quantities = request.form.getlist('quantities[]')
         units = request.form.getlist('units[]')
         
-        total_cost = 0
         for i in range(len(ingredients)):
-            product = Product.query.get(int(ingredients[i]))
-            quantity = float(quantities[i])
-            unit = units[i]
-            
-            # Calcul du coût de l'ingrédient
-            ingredient_cost = (quantity * product.purchase_price) / product.quantity
-            total_cost += ingredient_cost
-            
-            ingredient = RecipeIngredient(
-                recipe_id=recipe.id,
-                product_id=product.id,
-                quantity=quantity,
-                unit=unit,
-                cost=ingredient_cost
-            )
-            db.session.add(ingredient)
+            if ingredients[i] and quantities[i]:
+                ingredient = RecipeIngredient(
+                    recipe_id=recipe.id,
+                    product_id=ingredients[i],
+                    quantity=quantities[i],
+                    unit=units[i]
+                )
+                db.session.add(ingredient)
         
-        recipe.cost_price = total_cost
         db.session.commit()
-        flash('Recette ajoutée avec succès!')
+        flash('Recette ajoutée avec succès', 'success')
         return redirect(url_for('recipes'))
     
-    products = Product.query.filter_by(type='raw').all()
-    return render_template('add_recipe.html', products=products)
+    # Récupérer uniquement les matières premières pour les ingrédients
+    raw_products = Product.query.filter_by(type='raw').all()
+    return render_template('add_recipe.html', products=raw_products)
 
 # Routes pour la gestion des ventes
 @app.route('/sales')
