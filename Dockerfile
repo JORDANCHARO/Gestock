@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf2.0-0 \
     libffi-dev \
     shared-mime-info \
+    libgirepository1.0-dev \
+    gir1.2-gtk-3.0 \
+    libglib2.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Créer et définir le répertoire de travail
