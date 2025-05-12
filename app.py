@@ -28,6 +28,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 if os.environ.get('DATABASE_URL'):
     # Configuration pour la production (PostgreSQL)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://')
+elif os.environ.get('PYTHONANYWHERE_DOMAIN'):
+    # Configuration pour PythonAnywhere (MySQL)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://votre_nom_utilisateur:votre_mot_de_passe@votre_nom_utilisateur.mysql.pythonanywhere-services.com/votre_nom_utilisateur$gestock'
 else:
     # Configuration pour le développement (SQLite)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database', 'stock.db')
