@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y \
 # Créer et définir le répertoire de travail
 WORKDIR /app
 
+# Créer le dossier database
+RUN mkdir -p /app/database
+
 # Copier les fichiers de dépendances
 COPY requirements.txt .
 
